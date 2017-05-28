@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Bake Aide</string>
+    <string name="title_recipeitem_detail">RecipeItem Detail</string>
+</resources>
