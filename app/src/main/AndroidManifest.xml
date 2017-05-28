@@ -9,15 +9,22 @@
         android:roundIcon="@mipmap/launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
-            android:name=".RecipeItemListActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".RecipesActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".RecipeItemListActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
         <activity
             android:name=".RecipeItemDetailActivity"
             android:label="@string/title_recipeitem_detail"
@@ -27,5 +34,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.piatt.udacity.bakeaide.RecipeItemListActivity"/>
         </activity>
+
     </application>
 </manifest>
