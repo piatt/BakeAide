@@ -1,22 +1,27 @@
 package com.piatt.udacity.bakeaide;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 
+import com.trello.rxlifecycle2.components.RxActivity;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
-public class RecipesActivity extends Activity {
-    private final String RECIPES_VIEW_KEY = "RECIPES_VIEW_KEY";
+public class RecipesActivity extends RxActivity {
+    private final String RECIPES_VIEW_KEY = "recipesView";
+
+    private RecipesManager recipesManager;
+    private RecipesAdapter recipesAdapter;
 
     @BindView(R.id.recipes_view) RecyclerView recipesView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recipes);
+        setContentView(R.layout.recipes_activity);
         ButterKnife.bind(this);
         configureRecipesView();
     }
@@ -38,7 +43,14 @@ public class RecipesActivity extends Activity {
     }
 
     private void configureRecipesView() {
-//        recipesAdapter = new RecipesAdapter(this);
-//        recipesView.setAdapter(recipesAdapter);
+        recipesManager = new RecipesManager();
+        recipesManager.getRecipes()
+                .compose(bindToLifecycle())
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter(recipes -> !recipes.isEmpty())
+                .subscribe(recipes -> {
+                    recipesAdapter = new RecipesAdapter(recipes);
+                    recipesView.setAdapter(recipesAdapter);
+                });
     }
 }
