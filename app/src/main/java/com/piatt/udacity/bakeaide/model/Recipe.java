@@ -1,15 +1,18 @@
 package com.piatt.udacity.bakeaide.model;
 
+import org.parceler.Parcel;
+
 import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
 
+@Parcel
 public class Recipe {
-    @Getter @Setter private int id;
-    @Getter @Setter private String name;
-    @Getter @Setter private int servings;
-    @Getter @Setter private String image;
-    @Getter @Setter private List<Ingredient> ingredients;
-    @Getter @Setter private List<Step> steps;
+    @Getter @Setter int id;
+    @Getter @Setter String name;
+    @Getter @Setter int servings;
+    @Getter @Setter String image;
+    @Getter @Setter List<Ingredient> ingredients;
+    @Getter @Setter List<Step> steps;
 }

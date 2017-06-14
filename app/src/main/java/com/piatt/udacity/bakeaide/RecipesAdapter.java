@@ -1,7 +1,7 @@
 package com.piatt.udacity.bakeaide;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,12 +53,13 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         }
 
         @OnClick(R.id.recipe_name_view)
-        public void onRecipeNameViewClick() {
+        public void onRecipeNameViewClick(View view) {
             Recipe recipe = recipes.get(getAdapterPosition());
-            String message = String.format("id: %d name: %s servings: %d image: %s ingredients: %d steps: %d",
-                    recipe.getId(), recipe.getName(), recipe.getServings(), recipe.getImage(),
-                    recipe.getIngredients().size(), recipe.getSteps().size());
-            Log.d(getClass().getSimpleName(), message);
+            Intent intent = Henson.with(view.getContext())
+                    .gotoRecipeItemsActivity()
+                    .recipe(recipe)
+                    .build();
+            view.getContext().startActivity(intent);
         }
     }
 }

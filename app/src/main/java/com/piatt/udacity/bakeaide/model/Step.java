@@ -1,12 +1,15 @@
 package com.piatt.udacity.bakeaide.model;
 
+import org.parceler.Parcel;
+
 import lombok.Getter;
 import lombok.Setter;
 
+@Parcel
 public class Step {
-    @Getter @Setter private int id;
-    @Getter @Setter private String shortDescription;
-    @Getter @Setter private String description;
-    @Getter @Setter private String videoURL;
-    @Getter @Setter private String thumbnailURL;
+    @Getter @Setter int id;
+    @Getter @Setter String shortDescription;
+    @Getter @Setter String description;
+    @Getter @Setter String videoURL;
+    @Getter @Setter String thumbnailURL;
 }

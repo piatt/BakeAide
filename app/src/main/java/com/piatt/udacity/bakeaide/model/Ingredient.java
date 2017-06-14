@@ -1,10 +1,13 @@
 package com.piatt.udacity.bakeaide.model;
 
+import org.parceler.Parcel;
+
 import lombok.Getter;
 import lombok.Setter;
 
+@Parcel
 public class Ingredient {
-    @Getter @Setter private float quantity;
-    @Getter @Setter private String measure;
-    @Getter @Setter private String ingredient;
+    @Getter @Setter float quantity;
+    @Getter @Setter String measure;
+    @Getter @Setter String ingredient;
 }
