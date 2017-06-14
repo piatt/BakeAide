@@ -1,4 +1,4 @@
-package com.piatt.udacity.bakeaide;
+package com.piatt.udacity.bakeaide.manager;
 
 import com.piatt.udacity.bakeaide.model.Recipe;
 

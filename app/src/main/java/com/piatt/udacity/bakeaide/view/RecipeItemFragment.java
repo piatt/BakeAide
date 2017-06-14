@@ -1,4 +1,4 @@
-package com.piatt.udacity.bakeaide;
+package com.piatt.udacity.bakeaide.view;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.piatt.udacity.bakeaide.R;
 import com.piatt.udacity.bakeaide.model.Ingredient;
 
 import butterknife.BindView;
@@ -18,14 +19,14 @@ import butterknife.ButterKnife;
 /**
  * A fragment representing a single RecipeItem detail screen.
  * This fragment is either contained in a {@link RecipeItemsActivity}
- * in two-pane mode (on tablets) or a {@link RecipeItemDetailActivity}
+ * in two-pane mode (on tablets) or a {@link RecipeItemActivity}
  * on handsets.
  */
-public class RecipeItemDetailFragment extends Fragment {
+public class RecipeItemFragment extends Fragment {
     @InjectExtra Ingredient ingredient;
-    @BindView(R.id.recipeitem_detail) TextView details;
+    @BindView(R.id.recipe_item_detail) TextView details;
 
-    public RecipeItemDetailFragment() {}
+    public RecipeItemFragment() {}
 
     @Override
     public void onAttach(Context context) {
@@ -34,13 +35,12 @@ public class RecipeItemDetailFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.recipeitem_detail, container, false);
-        ButterKnife.bind(this, rootView);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.recipe_item_fragment, container, false);
+        ButterKnife.bind(this, view);
 
         details.setText(ingredient.getIngredient());
 
-        return rootView;
+        return view;
     }
 }

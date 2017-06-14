@@ -14,22 +14,21 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".RecipesActivity">
+            android:name=".view.RecipesActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
-        <activity android:name=".RecipeItemsActivity"/>
+        <activity android:name=".view.RecipeItemsActivity"/>
 
         <activity
-            android:name=".RecipeItemDetailActivity"
-            android:parentActivityName=".RecipeItemsActivity">
+            android:name=".view.RecipeItemActivity"
+            android:parentActivityName=".view.RecipeItemsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.piatt.udacity.bakeaide.RecipeItemsActivity"/>
+                android:value="com.piatt.udacity.bakeaide.view.RecipeItemsActivity"/>
         </activity>
-
     </application>
 </manifest>

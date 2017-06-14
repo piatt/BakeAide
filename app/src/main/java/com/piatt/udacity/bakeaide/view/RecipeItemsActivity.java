@@ -1,4 +1,4 @@
-package com.piatt.udacity.bakeaide;
+package com.piatt.udacity.bakeaide.view;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,9 +7,10 @@ import android.widget.FrameLayout;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
-import com.piatt.udacity.bakeaide.RecipeItemsAdapter.OnRecipeItemClickListener;
+import com.piatt.udacity.bakeaide.R;
 import com.piatt.udacity.bakeaide.model.Ingredient;
 import com.piatt.udacity.bakeaide.model.Recipe;
+import com.piatt.udacity.bakeaide.view.RecipeItemsAdapter.OnRecipeItemClickListener;
 
 import butterknife.BindView;
 
@@ -17,12 +18,11 @@ import butterknife.BindView;
  * An activity representing a list of RecipeItems. This activity
  * has different presentations for handset and tablet-size devices. On
  * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link RecipeItemDetailActivity} representing
+ * lead to a {@link RecipeItemActivity} representing
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
 public class RecipeItemsActivity extends BaseActivity implements OnRecipeItemClickListener {
-
     private boolean twoPaneLayout;
 
     @InjectExtra Recipe recipe;
@@ -46,16 +46,22 @@ public class RecipeItemsActivity extends BaseActivity implements OnRecipeItemCli
     @Override
     public void onRecipeItemClick(Ingredient ingredient) {
         if (twoPaneLayout) {
-            getIntent().putExtras(Henson.with(this)
-                    .gotoRecipeItemDetailFragment()
-                    .ingredient(ingredient)
-                    .build());
-            getSupportFragmentManager().beginTransaction().replace(R.id.detail_layout, new RecipeItemDetailFragment()).commit();
-        } else {
             Intent intent = Henson.with(this)
-                    .gotoRecipeItemDetailActivity()
+                    .gotoRecipeItemFragment()
                     .ingredient(ingredient)
                     .build();
+
+            getIntent().putExtras(intent);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.detail_layout, new RecipeItemFragment())
+                    .commit();
+        } else {
+            Intent intent = Henson.with(this)
+                    .gotoRecipeItemActivity()
+                    .ingredient(ingredient)
+                    .build();
+
             startActivity(intent);
         }
     }

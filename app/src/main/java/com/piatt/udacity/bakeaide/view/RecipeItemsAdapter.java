@@ -1,4 +1,4 @@
-package com.piatt.udacity.bakeaide;
+package com.piatt.udacity.bakeaide.view;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,7 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.piatt.udacity.bakeaide.RecipeItemsAdapter.RecipeItemViewHolder;
+import com.piatt.udacity.bakeaide.R;
+import com.piatt.udacity.bakeaide.view.RecipeItemsAdapter.RecipeItemViewHolder;
 import com.piatt.udacity.bakeaide.model.Ingredient;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class RecipeItemsAdapter extends RecyclerView.Adapter<RecipeItemViewHolde
 
     @Override
     public RecipeItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recipe_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recipe_item_layout, parent, false);
         return new RecipeItemViewHolder(view);
     }
 
@@ -45,7 +46,7 @@ public class RecipeItemsAdapter extends RecyclerView.Adapter<RecipeItemViewHolde
         void onRecipeItemClick(Ingredient ingredient);
     }
 
-    protected class RecipeItemViewHolder extends RecyclerView.ViewHolder {
+    public class RecipeItemViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.recipe_name_view) TextView recipeNameView;
 
         public RecipeItemViewHolder(View itemView) {

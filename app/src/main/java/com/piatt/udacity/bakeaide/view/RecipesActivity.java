@@ -1,6 +1,9 @@
-package com.piatt.udacity.bakeaide;
+package com.piatt.udacity.bakeaide.view;
 
 import android.os.Bundle;
+
+import com.piatt.udacity.bakeaide.R;
+import com.piatt.udacity.bakeaide.manager.RecipesManager;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
