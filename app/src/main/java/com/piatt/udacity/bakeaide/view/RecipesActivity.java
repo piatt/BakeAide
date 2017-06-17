@@ -5,15 +5,15 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.ImageView;
 
+import com.jakewharton.rxbinding2.view.RxView;
 import com.piatt.udacity.bakeaide.BakeAideApplication;
 import com.piatt.udacity.bakeaide.R;
 import com.piatt.udacity.bakeaide.manager.RecipesManager;
-import com.piatt.udacity.bakeaide.model.Recipe;
 
 import butterknife.BindView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
-public class RecipesActivity extends BaseActivity<Recipe> {
+public class RecipesActivity extends BaseActivity {
     private RecipesManager recipesManager;
 
     @BindView(R.id.empty_view) ImageView emptyView;
@@ -45,23 +45,24 @@ public class RecipesActivity extends BaseActivity<Recipe> {
             recipesManager.fetchRecipes();
         }
 
-        recipesManager.onFetchRecipesEvent()
+        recipesManager.onFetchStatusEvent()
                 .compose(bindToLifecycle())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(event -> {
                     refreshLayout.setRefreshing(event.isFetching());
-
                     if (event.isFetching()) {
                         hideSnackbar();
                     } else if (event.hasMessage()) {
                         showSnackbar(event.getMessage());
-                    } else if (event.isSuccess()) {
-                        updateRecyclerView(event.getRecipes());
                     }
+                });
 
-                    if (hasState && !recyclerViewPopulated() && event.hasRecipes()) {
-                        updateRecyclerView(event.getRecipes());
-                    }
+        recipesManager.getRecipes()
+                .compose(bindToLifecycle())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(recipes -> {
+                    RxView.visibility(emptyView).accept(false);
+                    updateRecyclerView(recipes);
                 });
     }
 }

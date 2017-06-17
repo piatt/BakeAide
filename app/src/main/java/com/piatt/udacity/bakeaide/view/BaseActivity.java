@@ -19,7 +19,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public abstract class BaseActivity<T> extends RxAppCompatActivity {
+public abstract class BaseActivity extends RxAppCompatActivity {
     private final String LAYOUT_MANAGER_STATE = "layoutManagerState";
     private final String RECYCLER_VIEW_STATE = "recyclerViewState";
 
@@ -84,12 +84,10 @@ public abstract class BaseActivity<T> extends RxAppCompatActivity {
         }
     }
 
-    protected void updateRecyclerView(List<T> items) {
-        ((BaseAdapter) recyclerView.getAdapter()).setItems(items);
-    }
-
-    protected boolean recyclerViewPopulated() {
-        return recyclerViewConfigured && recyclerView.getAdapter().getItemCount() > 0;
+    protected void updateRecyclerView(List items) {
+        if (recyclerViewConfigured) {
+            ((BaseAdapter) recyclerView.getAdapter()).setItems(items);
+        }
     }
 
     protected void showSnackbar(String message) {

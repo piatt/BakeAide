@@ -5,7 +5,7 @@ import android.support.annotation.StringRes;
 
 import com.piatt.udacity.bakeaide.BakeAideApplication;
 import com.piatt.udacity.bakeaide.R;
-import com.piatt.udacity.bakeaide.model.FetchRecipesEvent;
+import com.piatt.udacity.bakeaide.model.FetchStatusEvent;
 import com.piatt.udacity.bakeaide.model.Recipe;
 
 import java.util.List;
@@ -25,7 +25,8 @@ import retrofit2.http.GET;
 public class RecipesManager {
     private Context context;
     private RecipesApi recipesApi;
-    private BehaviorSubject<FetchRecipesEvent> fetchRecipesEventBus;
+    private BehaviorSubject<FetchStatusEvent> fetchStatusEventBus;
+    private BehaviorSubject<List<Recipe>> recipesEventBus;
 
     public RecipesManager(Context context) {
         this.context = context;
@@ -37,30 +38,36 @@ public class RecipesManager {
                 .build();
 
         recipesApi = retrofit.create(RecipesApi.class);
-        fetchRecipesEventBus = BehaviorSubject.create();
+        fetchStatusEventBus = BehaviorSubject.create();
+        recipesEventBus = BehaviorSubject.create();
     }
 
     public void fetchRecipes() {
         if (BakeAideApplication.getApp().isNetworkAvailable()) {
             recipesApi.getRecipes()
                     .subscribeOn(Schedulers.io())
-                    .doOnSubscribe(disposable -> postFetchRecipesEvent(new FetchRecipesEvent(true)))
+                    .doOnSubscribe(disposable -> fetchStatusEventBus.onNext(new FetchStatusEvent(true)))
                     .delay(3, TimeUnit.SECONDS)
                     .flatMap(this::getRecipesWithImages)
                     .subscribe(recipes -> {
                         if (recipes.isEmpty()) {
-                            postFetchRecipesEvent(new FetchRecipesEvent(getString(R.string.empty_message)));
+                            fetchStatusEventBus.onNext(new FetchStatusEvent(getString(R.string.empty_message)));
                         } else {
-                            postFetchRecipesEvent(new FetchRecipesEvent(recipes));
+                            fetchStatusEventBus.onNext(new FetchStatusEvent(false));
+                            recipesEventBus.onNext(recipes);
                         }
-                    }, error -> postFetchRecipesEvent(new FetchRecipesEvent(getString(R.string.error_message))));
+                    }, error -> fetchStatusEventBus.onNext(new FetchStatusEvent(getString(R.string.error_message))));
         } else {
-            postFetchRecipesEvent(new FetchRecipesEvent(getString(R.string.connection_message)));
+            fetchStatusEventBus.onNext(new FetchStatusEvent(getString(R.string.connection_message)));
         }
     }
 
-    public Flowable<FetchRecipesEvent> onFetchRecipesEvent() {
-        return fetchRecipesEventBus.toFlowable(BackpressureStrategy.LATEST);
+    public Flowable<FetchStatusEvent> onFetchStatusEvent() {
+        return fetchStatusEventBus.toFlowable(BackpressureStrategy.LATEST);
+    }
+
+    public Flowable<List<Recipe>> getRecipes() {
+        return recipesEventBus.toFlowable(BackpressureStrategy.LATEST);
     }
 
     private Single<List<Recipe>> getRecipesWithImages(List<Recipe> recipes) {
@@ -73,16 +80,6 @@ public class RecipesManager {
                         recipe.setImage(recipeImageUrls[recipe.getId() - 1]);
                     }
                 }).toList();
-    }
-
-    private void postFetchRecipesEvent(FetchRecipesEvent event) {
-        if (!event.isSuccess() && fetchRecipesEventBus.hasValue()) {
-            FetchRecipesEvent currentEvent = fetchRecipesEventBus.getValue();
-            if (currentEvent.hasRecipes()) {
-                event.setRecipes(currentEvent.getRecipes());
-            }
-        }
-        fetchRecipesEventBus.onNext(event);
     }
 
     private String getString(@StringRes int resourceId) {
