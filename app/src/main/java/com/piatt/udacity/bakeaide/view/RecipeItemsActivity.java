@@ -34,7 +34,7 @@ public class RecipeItemsActivity extends BaseActivity implements OnRecipeItemCli
 
         Dart.inject(this);
         configureToolbar(true, recipe.getName());
-        configureRecyclerView(new RecipeItemsAdapter(this, recipe.getIngredients()));
+        configureRecyclerView(new RecipeItemsAdapter(recipe.getIngredients(), this));
         twoPaneLayout = detailLayout != null;
     }
 

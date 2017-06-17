@@ -5,13 +5,17 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.widget.ImageView;
 
+import com.piatt.udacity.bakeaide.BakeAideApplication;
 import com.piatt.udacity.bakeaide.R;
 import com.piatt.udacity.bakeaide.manager.RecipesManager;
+import com.piatt.udacity.bakeaide.model.Recipe;
 
 import butterknife.BindView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
-public class RecipesActivity extends BaseActivity {
+public class RecipesActivity extends BaseActivity<Recipe> {
+    private RecipesManager recipesManager;
+
     @BindView(R.id.empty_view) ImageView emptyView;
     @BindView(R.id.refresh_layout) SwipeRefreshLayout refreshLayout;
 
@@ -19,8 +23,10 @@ public class RecipesActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        recipesManager = BakeAideApplication.getApp().getRecipesManager();
         configureRefreshViews();
-        fetchRecipes();
+        configureRecyclerView(new RecipesAdapter());
+        configureRecipes(savedInstanceState != null);
     }
 
     @Override
@@ -31,32 +37,31 @@ public class RecipesActivity extends BaseActivity {
     private void configureRefreshViews() {
         refreshLayout.setColorSchemeColors(Color.WHITE);
         refreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorAccent);
-        refreshLayout.setOnRefreshListener(this::fetchRecipes);
+        refreshLayout.setOnRefreshListener(() -> recipesManager.fetchRecipes());
     }
 
-    private void fetchRecipes() {
-        RecipesManager recipesManager = new RecipesManager(this);
-        recipesManager.getRecipes()
+    private void configureRecipes(boolean hasState) {
+        if (!hasState) {
+            recipesManager.fetchRecipes();
+        }
+
+        recipesManager.onFetchRecipesEvent()
                 .compose(bindToLifecycle())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(disposable -> {
-                    if (!refreshLayout.isRefreshing()) {
-                        refreshLayout.setRefreshing(true);
+                .subscribe(event -> {
+                    refreshLayout.setRefreshing(event.isFetching());
+
+                    if (event.isFetching()) {
+                        hideSnackbar();
+                    } else if (event.hasMessage()) {
+                        showSnackbar(event.getMessage());
+                    } else if (event.isSuccess()) {
+                        updateRecyclerView(event.getRecipes());
                     }
-                    hideSnackbar();
-                })
-                .subscribe(recipes -> {
-                    refreshLayout.setRefreshing(false);
-                    if (recipes.isEmpty()) {
-                        showSnackbar(getString(R.string.empty_message));
-                    } else if (recipes.size() == 1) {
-                        showSnackbar(getString(R.string.connection_message));
-                    } else {
-                        configureRecyclerView(new RecipesAdapter(recipes));
+
+                    if (hasState && !recyclerViewPopulated() && event.hasRecipes()) {
+                        updateRecyclerView(event.getRecipes());
                     }
-                }, error -> {
-                    refreshLayout.setRefreshing(false);
-                    showSnackbar(getString(R.string.error_message));
                 });
     }
 }

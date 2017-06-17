@@ -1,66 +1,49 @@
 package com.piatt.udacity.bakeaide.view;
 
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.piatt.udacity.bakeaide.R;
-import com.piatt.udacity.bakeaide.view.RecipeItemsAdapter.RecipeItemViewHolder;
 import com.piatt.udacity.bakeaide.model.Ingredient;
+import com.piatt.udacity.bakeaide.view.RecipeItemsAdapter.RecipeItemViewHolder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class RecipeItemsAdapter extends RecyclerView.Adapter<RecipeItemViewHolder> {
+public class RecipeItemsAdapter extends BaseAdapter<Ingredient, RecipeItemViewHolder> {
     private OnRecipeItemClickListener listener;
-    private List<Ingredient> ingredients = new ArrayList<>();
 
-    public RecipeItemsAdapter(OnRecipeItemClickListener listener, List<Ingredient> ingredients) {
+    public RecipeItemsAdapter(List<Ingredient> items, OnRecipeItemClickListener listener) {
+        super(R.layout.recipe_item_layout, items);
         this.listener = listener;
-        this.ingredients = ingredients;
     }
 
     @Override
-    public RecipeItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recipe_item_layout, parent, false);
+    protected RecipeItemViewHolder getViewHolder(View view) {
         return new RecipeItemViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(RecipeItemViewHolder holder, int position) {
-        holder.onBind(ingredients.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return ingredients.size();
     }
 
     public interface OnRecipeItemClickListener {
         void onRecipeItemClick(Ingredient ingredient);
     }
 
-    public class RecipeItemViewHolder extends RecyclerView.ViewHolder {
+    public class RecipeItemViewHolder extends BaseViewHolder<Ingredient> {
         @BindView(R.id.recipe_name_view) TextView recipeNameView;
 
         public RecipeItemViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
         }
 
-        private void onBind(Ingredient ingredient) {
-            recipeNameView.setText(ingredient.getIngredient());
+        @Override
+        public void onBind(Ingredient item) {
+            recipeNameView.setText(item.getIngredient());
         }
 
         @OnClick(R.id.recipe_name_view)
         public void onRecipeNameViewClick() {
-            Ingredient ingredient = ingredients.get(getAdapterPosition());
+            Ingredient ingredient = getItem(getAdapterPosition());
             listener.onRecipeItemClick(ingredient);
         }
     }

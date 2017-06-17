@@ -6,11 +6,12 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:allowBackup="true"
-        android:icon="@mipmap/launcher"
+        android:name=".BakeAideApplication"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/launcher"
+        android:allowBackup="true"
         android:supportsRtl="true"
+        android:icon="@mipmap/launcher"
+        android:roundIcon="@mipmap/launcher"
         android:theme="@style/AppTheme">
 
         <activity

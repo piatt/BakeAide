@@ -14,14 +14,16 @@ import com.jakewharton.rxbinding2.support.v7.widget.RxToolbar;
 import com.piatt.udacity.bakeaide.R;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public abstract class BaseActivity extends RxAppCompatActivity {
+public abstract class BaseActivity<T> extends RxAppCompatActivity {
     private final String LAYOUT_MANAGER_STATE = "layoutManagerState";
+    private final String RECYCLER_VIEW_STATE = "recyclerViewState";
 
     private Snackbar snackbar;
-    private RecyclerView.Adapter adapter;
     private boolean recyclerViewConfigured;
 
     @BindView(R.id.coordinator_layout) CoordinatorLayout coordinatorLayout;
@@ -39,8 +41,9 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (recyclerViewConfigured) {
-            Parcelable stockViewState = recyclerView.getLayoutManager().onSaveInstanceState();
-            outState.putParcelable(LAYOUT_MANAGER_STATE, stockViewState);
+            Parcelable layoutManagerState = recyclerView.getLayoutManager().onSaveInstanceState();
+            outState.putParcelable(LAYOUT_MANAGER_STATE, layoutManagerState);
+            outState.putBoolean(RECYCLER_VIEW_STATE, recyclerViewConfigured);
         }
         super.onSaveInstanceState(outState);
     }
@@ -48,10 +51,12 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (recyclerViewConfigured && savedInstanceState != null
-                && savedInstanceState.containsKey(LAYOUT_MANAGER_STATE)) {
-            Parcelable stockViewState = savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE);
-            recyclerView.getLayoutManager().onRestoreInstanceState(stockViewState);
+        if (savedInstanceState != null) {
+            recyclerViewConfigured = savedInstanceState.getBoolean(RECYCLER_VIEW_STATE, false);
+            if (recyclerViewConfigured && savedInstanceState.containsKey(LAYOUT_MANAGER_STATE)) {
+                Parcelable layoutManagerState = savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE);
+                recyclerView.getLayoutManager().onRestoreInstanceState(layoutManagerState);
+            }
         }
     }
 
@@ -71,13 +76,20 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         }
     }
 
-    protected void configureRecyclerView(RecyclerView.Adapter adapter) {
+    protected void configureRecyclerView(BaseAdapter adapter) {
         if (recyclerView != null) {
-            this.adapter = adapter;
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(adapter);
             recyclerViewConfigured = true;
         }
+    }
+
+    protected void updateRecyclerView(List<T> items) {
+        ((BaseAdapter) recyclerView.getAdapter()).setItems(items);
+    }
+
+    protected boolean recyclerViewPopulated() {
+        return recyclerViewConfigured && recyclerView.getAdapter().getItemCount() > 0;
     }
 
     protected void showSnackbar(String message) {
