@@ -25,7 +25,7 @@ public class RecipesActivity extends BaseActivity {
 
         recipesManager = BakeAideApplication.getApp().getRecipesManager();
         configureRefreshViews();
-        configureRecyclerView(new RecipesAdapter());
+        configureRecyclerView(new RecipesAdapter(), true);
         configureRecipes(savedInstanceState != null);
     }
 

@@ -3,14 +3,16 @@ package com.piatt.udacity.bakeaide.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.FrameLayout;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.piatt.udacity.bakeaide.R;
-import com.piatt.udacity.bakeaide.model.Ingredient;
 import com.piatt.udacity.bakeaide.model.Recipe;
-import com.piatt.udacity.bakeaide.view.RecipeItemsAdapter.OnRecipeItemClickListener;
+import com.piatt.udacity.bakeaide.model.Step;
+import com.piatt.udacity.bakeaide.view.StepsAdapter.OnStepClickListener;
 
 import butterknife.BindView;
 
@@ -22,10 +24,11 @@ import butterknife.BindView;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class RecipeItemsActivity extends BaseActivity implements OnRecipeItemClickListener {
+public class RecipeItemsActivity extends BaseActivity implements OnStepClickListener {
     private boolean twoPaneLayout;
 
     @InjectExtra Recipe recipe;
+    @BindView(R.id.ingredients_view) RecyclerView ingredientsView;
     @Nullable @BindView(R.id.detail_layout) FrameLayout detailLayout;
 
     @Override
@@ -34,8 +37,12 @@ public class RecipeItemsActivity extends BaseActivity implements OnRecipeItemCli
 
         Dart.inject(this);
         configureToolbar(true, recipe.getName());
-        configureRecyclerView(new RecipeItemsAdapter(recipe.getIngredients(), this));
+        configureRecyclerView(new StepsAdapter(recipe.getSteps(), this), false);
         twoPaneLayout = detailLayout != null;
+
+        ingredientsView.setLayoutManager(new LinearLayoutManager(this));
+        ingredientsView.setAdapter(new IngredientsAdapter(recipe.getIngredients()));
+        ingredientsView.setNestedScrollingEnabled(false);
     }
 
     @Override
@@ -44,11 +51,11 @@ public class RecipeItemsActivity extends BaseActivity implements OnRecipeItemCli
     }
 
     @Override
-    public void onRecipeItemClick(Ingredient ingredient) {
+    public void onStepClick(Step step) {
         if (twoPaneLayout) {
             Intent intent = Henson.with(this)
                     .gotoRecipeItemFragment()
-                    .ingredient(ingredient)
+                    .step(step)
                     .build();
 
             getIntent().putExtras(intent);
@@ -59,7 +66,7 @@ public class RecipeItemsActivity extends BaseActivity implements OnRecipeItemCli
         } else {
             Intent intent = Henson.with(this)
                     .gotoRecipeItemActivity()
-                    .ingredient(ingredient)
+                    .step(step)
                     .build();
 
             startActivity(intent);

@@ -76,10 +76,11 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         }
     }
 
-    protected void configureRecyclerView(BaseAdapter adapter) {
+    protected void configureRecyclerView(BaseAdapter adapter, boolean nestedScrollingEnabled) {
         if (recyclerView != null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(adapter);
+            recyclerView.setNestedScrollingEnabled(nestedScrollingEnabled);
             recyclerViewConfigured = true;
         }
     }

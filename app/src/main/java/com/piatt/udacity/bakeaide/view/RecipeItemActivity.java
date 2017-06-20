@@ -6,7 +6,7 @@ import android.os.Bundle;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.piatt.udacity.bakeaide.R;
-import com.piatt.udacity.bakeaide.model.Ingredient;
+import com.piatt.udacity.bakeaide.model.Step;
 
 /**
  * An activity representing a single RecipeItem detail screen. This
@@ -15,19 +15,19 @@ import com.piatt.udacity.bakeaide.model.Ingredient;
  * in a {@link RecipeItemsActivity}.
  */
 public class RecipeItemActivity extends BaseActivity {
-    @InjectExtra Ingredient ingredient;
+    @InjectExtra Step step;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Dart.inject(this);
-        configureToolbar(true, ingredient.getIngredient());
+        configureToolbar(true, step.getShortDescription());
 
         if (savedInstanceState == null) {
             Intent intent = Henson.with(this)
                     .gotoRecipeItemFragment()
-                    .ingredient(ingredient)
+                    .step(step)
                     .build();
 
             getIntent().putExtras(intent);

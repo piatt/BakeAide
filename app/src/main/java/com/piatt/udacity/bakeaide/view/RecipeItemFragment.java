@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.piatt.udacity.bakeaide.R;
-import com.piatt.udacity.bakeaide.model.Ingredient;
+import com.piatt.udacity.bakeaide.model.Step;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
  * on handsets.
  */
 public class RecipeItemFragment extends Fragment {
-    @InjectExtra Ingredient ingredient;
+    @InjectExtra Step step;
     @BindView(R.id.recipe_item_detail) TextView details;
 
     public RecipeItemFragment() {}
@@ -39,7 +39,7 @@ public class RecipeItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.recipe_item_fragment, container, false);
         ButterKnife.bind(this, view);
 
-        details.setText(ingredient.getIngredient());
+        details.setText(step.getDescription());
 
         return view;
     }
