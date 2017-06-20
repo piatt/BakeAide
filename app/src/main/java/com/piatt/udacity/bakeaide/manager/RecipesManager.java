@@ -9,7 +9,6 @@ import com.piatt.udacity.bakeaide.model.FetchStatusEvent;
 import com.piatt.udacity.bakeaide.model.Recipe;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -47,7 +46,6 @@ public class RecipesManager {
             recipesApi.getRecipes()
                     .subscribeOn(Schedulers.io())
                     .doOnSubscribe(disposable -> fetchStatusEventBus.onNext(new FetchStatusEvent(true)))
-                    .delay(3, TimeUnit.SECONDS)
                     .flatMap(this::getRecipesWithImages)
                     .subscribe(recipes -> {
                         if (recipes.isEmpty()) {
@@ -76,7 +74,7 @@ public class RecipesManager {
         return Observable.just(recipes)
                 .flatMap(Observable::fromIterable)
                 .doOnNext(recipe -> {
-                    if (recipe.getId() < recipeImageUrls.length) {
+                    if (recipe.getId() <= recipeImageUrls.length) {
                         recipe.setImage(recipeImageUrls[recipe.getId() - 1]);
                     }
                 }).toList();

@@ -15,4 +15,8 @@ public class Recipe {
     @Getter @Setter String image;
     @Getter @Setter List<Ingredient> ingredients;
     @Getter @Setter List<Step> steps;
+
+    public boolean hasImage() {
+        return image != null && !image.isEmpty();
+    }
 }

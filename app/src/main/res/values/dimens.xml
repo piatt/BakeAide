@@ -1,4 +1,15 @@
 <resources>
     <dimen name="app_icon">64dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+
+    <dimen name="recipe_card_side_margin">0dp</dimen>
+    <dimen name="recipe_card_corner_radius">0dp</dimen>
+    <dimen name="recipe_card_image_height">200dp</dimen>
+
+    <dimen name="margin_small">4dp</dimen>
+    <dimen name="margin_medium">8dp</dimen>
+    <dimen name="margin_standard">16dp</dimen>
+    <dimen name="margin_large">32dp</dimen>
+    <dimen name="margin_xlarge">64dp</dimen>
+
 </resources>
