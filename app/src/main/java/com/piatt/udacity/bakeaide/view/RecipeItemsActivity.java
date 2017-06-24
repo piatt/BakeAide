@@ -12,7 +12,7 @@ import com.f2prateek.dart.InjectExtra;
 import com.piatt.udacity.bakeaide.R;
 import com.piatt.udacity.bakeaide.model.Recipe;
 import com.piatt.udacity.bakeaide.model.Step;
-import com.piatt.udacity.bakeaide.view.StepsAdapter.OnStepClickListener;
+import com.piatt.udacity.bakeaide.view.BaseAdapter.OnItemClickListener;
 
 import butterknife.BindView;
 
@@ -24,7 +24,7 @@ import butterknife.BindView;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class RecipeItemsActivity extends BaseActivity implements OnStepClickListener {
+public class RecipeItemsActivity extends BaseActivity implements OnItemClickListener<Step> {
     private boolean twoPaneLayout;
 
     @InjectExtra Recipe recipe;
@@ -51,7 +51,7 @@ public class RecipeItemsActivity extends BaseActivity implements OnStepClickList
     }
 
     @Override
-    public void onStepClick(Step step) {
+    public void onItemClick(Step step) {
         if (twoPaneLayout) {
             Intent intent = Henson.with(this)
                     .gotoRecipeItemFragment()

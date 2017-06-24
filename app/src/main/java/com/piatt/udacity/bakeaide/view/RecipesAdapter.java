@@ -1,7 +1,5 @@
 package com.piatt.udacity.bakeaide.view;
 
-import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,8 +13,8 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 
 public class RecipesAdapter extends BaseAdapter<Recipe, RecipeViewHolder> {
-    public RecipesAdapter() {
-        super(R.layout.recipe_item_layout);
+    public RecipesAdapter(OnItemClickListener<Recipe> listener) {
+        super(R.layout.recipe_item_layout, listener);
     }
 
     @Override
@@ -30,29 +28,21 @@ public class RecipesAdapter extends BaseAdapter<Recipe, RecipeViewHolder> {
 
         public RecipeViewHolder(View itemView) {
             super(itemView);
-            RxView.clicks(itemView).subscribe(click -> onRecipeClick());
+
+            RxView.clicks(itemView).subscribe(click -> {
+                Recipe recipe = getItem(getAdapterPosition());
+                getOnItemClickListener().onItemClick(recipe);
+            });
         }
 
         @Override
-        public void onBind(Recipe item) {
-            if (item.hasImage()) {
-                Picasso.with(itemView.getContext()).load(item.getImage()).fit().centerCrop().into(recipeImageView);
+        protected void onBind(Recipe recipe) {
+            if (recipe.hasImage()) {
+                Picasso.with(itemView.getContext()).load(recipe.getImage()).fit().centerCrop().into(recipeImageView);
             } else {
                 Picasso.with(itemView.getContext()).load(R.drawable.image_placeholder).fit().centerCrop().into(recipeImageView);
             }
-            recipeNameView.setText(item.getName());
-        }
-
-        private void onRecipeClick() {
-            Context context = itemView.getContext();
-            Recipe recipe = getItem(getAdapterPosition());
-
-            Intent intent = Henson.with(context)
-                    .gotoRecipeItemsActivity()
-                    .recipe(recipe)
-                    .build();
-
-            context.startActivity(intent);
+            recipeNameView.setText(recipe.getName());
         }
     }
 }

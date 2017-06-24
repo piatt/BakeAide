@@ -1,5 +1,6 @@
 package com.piatt.udacity.bakeaide.view;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -9,11 +10,13 @@ import com.jakewharton.rxbinding2.view.RxView;
 import com.piatt.udacity.bakeaide.BakeAideApplication;
 import com.piatt.udacity.bakeaide.R;
 import com.piatt.udacity.bakeaide.manager.RecipesManager;
+import com.piatt.udacity.bakeaide.model.Recipe;
+import com.piatt.udacity.bakeaide.view.BaseAdapter.OnItemClickListener;
 
 import butterknife.BindView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
-public class RecipesActivity extends BaseActivity {
+public class RecipesActivity extends BaseActivity implements OnItemClickListener<Recipe> {
     private RecipesManager recipesManager;
 
     @BindView(R.id.empty_view) ImageView emptyView;
@@ -25,7 +28,7 @@ public class RecipesActivity extends BaseActivity {
 
         recipesManager = BakeAideApplication.getApp().getRecipesManager();
         configureRefreshViews();
-        configureRecyclerView(new RecipesAdapter(), true);
+        configureRecyclerView(new RecipesAdapter(this), true);
         configureRecipes(savedInstanceState != null);
     }
 
@@ -64,5 +67,15 @@ public class RecipesActivity extends BaseActivity {
                     RxView.visibility(emptyView).accept(false);
                     updateRecyclerView(recipes);
                 });
+    }
+
+    @Override
+    public void onItemClick(Recipe recipe) {
+        Intent intent = Henson.with(this)
+                .gotoRecipeItemsActivity()
+                .recipe(recipe)
+                .build();
+
+        startActivity(intent);
     }
 }

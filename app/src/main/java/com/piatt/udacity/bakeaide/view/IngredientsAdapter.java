@@ -12,8 +12,8 @@ import java.util.List;
 import butterknife.BindView;
 
 public class IngredientsAdapter extends BaseAdapter<Ingredient, IngredientViewHolder> {
-    public IngredientsAdapter(List<Ingredient> items) {
-        super(R.layout.ingredient_item_layout, items);
+    public IngredientsAdapter(List<Ingredient> ingredients) {
+        super(R.layout.ingredient_item_layout, ingredients);
     }
 
     @Override
@@ -22,15 +22,15 @@ public class IngredientsAdapter extends BaseAdapter<Ingredient, IngredientViewHo
     }
 
     public class IngredientViewHolder extends BaseViewHolder<Ingredient> {
-        @BindView(R.id.ingredient_name_view) TextView ingredientNameView;
+        @BindView(R.id.ingredient_view) TextView ingredientView;
 
         public IngredientViewHolder(View itemView) {
             super(itemView);
         }
 
         @Override
-        public void onBind(Ingredient item) {
-            ingredientNameView.setText(item.toString());
+        protected void onBind(Ingredient ingredient) {
+            ingredientView.setText(ingredient.toString());
         }
     }
 }

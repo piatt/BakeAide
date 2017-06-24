@@ -68,6 +68,11 @@ public class RecipesManager {
         return recipesEventBus.toFlowable(BackpressureStrategy.LATEST);
     }
 
+    /**
+     * This method is only here to make the visual user experience nicer.
+     * This method takes the list of recipes fetched from the network and adds pre-chosen image URLs,
+     * since the predefined JSON has no image URLs attached to its recipes.
+     */
     private Single<List<Recipe>> getRecipesWithImages(List<Recipe> recipes) {
         String[] recipeImageUrls = context.getResources().getStringArray(R.array.recipe_image_urls);
 

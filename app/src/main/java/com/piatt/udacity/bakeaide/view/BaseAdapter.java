@@ -9,17 +9,30 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+
 public abstract class BaseAdapter<T, VH extends BaseViewHolder<T>> extends RecyclerView.Adapter<VH> {
     private int layoutResourceId;
     private List<T> items = new ArrayList<>();
+    @Getter OnItemClickListener<T> onItemClickListener;
 
-    public BaseAdapter(int layoutResourceId) {
+    public BaseAdapter(@LayoutRes int layoutResourceId) {
         this.layoutResourceId = layoutResourceId;
     }
 
+    public BaseAdapter(@LayoutRes int layoutResourceId, OnItemClickListener<T> listener) {
+        this.layoutResourceId = layoutResourceId;
+        this.onItemClickListener = listener;
+    }
+
     public BaseAdapter(@LayoutRes int layoutResourceId, List<T> items) {
+        this(layoutResourceId, items, null);
+    }
+
+    public BaseAdapter(@LayoutRes int layoutResourceId, List<T> items, OnItemClickListener<T> listener) {
         this.layoutResourceId = layoutResourceId;
         this.items = items;
+        this.onItemClickListener = listener;
         notifyDataSetChanged();
     }
 
@@ -30,8 +43,8 @@ public abstract class BaseAdapter<T, VH extends BaseViewHolder<T>> extends Recyc
     }
 
     @Override
-    public void onBindViewHolder(VH holder, int position) {
-        holder.onBind(getItem(position));
+    public void onBindViewHolder(VH viewHolder, int position) {
+        viewHolder.onBind(getItem(position));
     }
 
     @Override
@@ -48,5 +61,9 @@ public abstract class BaseAdapter<T, VH extends BaseViewHolder<T>> extends Recyc
     protected void setItems(List<T> items) {
         this.items = items;
         notifyDataSetChanged();
+    }
+
+    public interface OnItemClickListener<T> {
+        void onItemClick(T item);
     }
 }
