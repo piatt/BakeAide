@@ -10,4 +10,10 @@
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
     </style>
+
+    <style name="Header" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Label" parent="TextAppearance.AppCompat.Medium"/>
 </resources>

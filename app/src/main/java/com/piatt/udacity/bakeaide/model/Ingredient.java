@@ -5,16 +5,15 @@ import org.parceler.Parcel;
 import java.text.NumberFormat;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Parcel
 public class Ingredient {
     private final String SPACE = " ";
     private final String GENERIC_MEASURE = "UNIT";
 
-    @Getter @Setter float quantity;
-    @Getter @Setter String measure;
-    @Getter @Setter String ingredient;
+    @Getter float quantity;
+    @Getter String measure;
+    @Getter String ingredient;
 
     public String toString() {
         StringBuilder sb = new StringBuilder();

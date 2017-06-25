@@ -3,9 +3,12 @@ package com.piatt.udacity.bakeaide.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -28,6 +31,9 @@ public class RecipeItemsActivity extends BaseActivity implements OnItemClickList
     private boolean twoPaneLayout;
 
     @InjectExtra Recipe recipe;
+    @BindView(R.id.ingredients_header_view) TextView ingredientsHeaderView;
+    @BindView(R.id.servings_view) TextView servingsView;
+    @BindView(R.id.steps_header_view) TextView stepsHeaderView;
     @BindView(R.id.ingredients_view) RecyclerView ingredientsView;
     @BindView(R.id.steps_view) RecyclerView stepsView;
     @Nullable @BindView(R.id.detail_layout) FrameLayout detailLayout;
@@ -38,8 +44,8 @@ public class RecipeItemsActivity extends BaseActivity implements OnItemClickList
 
         Dart.inject(this);
         configureToolbar(true, recipe.getName());
-        configureIngredientsView();
-        configureStepsView();
+        configureIngredientsViews();
+        configureStepsViews();
         twoPaneLayout = detailLayout != null;
     }
 
@@ -71,15 +77,26 @@ public class RecipeItemsActivity extends BaseActivity implements OnItemClickList
         }
     }
 
-    private void configureIngredientsView() {
-        ingredientsView.setLayoutManager(new LinearLayoutManager(this));
-        ingredientsView.setAdapter(new IngredientsAdapter(recipe.getIngredients()));
-        ingredientsView.setNestedScrollingEnabled(false);
+    private void configureIngredientsViews() {
+        if (recipe.hasIngredients()) {
+            ingredientsHeaderView.setVisibility(View.VISIBLE);
+            ingredientsView.setLayoutManager(new LinearLayoutManager(this));
+            ingredientsView.setAdapter(new IngredientsAdapter(recipe.getIngredients()));
+            ingredientsView.setNestedScrollingEnabled(false);
+        }
+        if (recipe.hasServings()) {
+            servingsView.setVisibility(View.VISIBLE);
+            servingsView.setText(getResources().getQuantityString(R.plurals.servings_message, recipe.getServings(), recipe.getServings()));
+        }
     }
 
-    private void configureStepsView() {
-        stepsView.setLayoutManager(new LinearLayoutManager(this));
-        stepsView.setAdapter(new StepsAdapter(recipe.getSteps(), this));
-        stepsView.setNestedScrollingEnabled(false);
+    private void configureStepsViews() {
+        if (recipe.hasSteps()) {
+            stepsHeaderView.setVisibility(View.VISIBLE);
+            stepsView.setLayoutManager(new LinearLayoutManager(this));
+            stepsView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+            stepsView.setAdapter(new StepsAdapter(recipe.getSteps(), this));
+            stepsView.setNestedScrollingEnabled(false);
+        }
     }
 }

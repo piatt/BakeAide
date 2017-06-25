@@ -9,14 +9,26 @@ import lombok.Setter;
 
 @Parcel
 public class Recipe {
-    @Getter @Setter int id;
-    @Getter @Setter String name;
-    @Getter @Setter int servings;
+    @Getter int id;
+    @Getter String name;
+    @Getter int servings;
     @Getter @Setter String image;
-    @Getter @Setter List<Ingredient> ingredients;
-    @Getter @Setter List<Step> steps;
+    @Getter List<Ingredient> ingredients;
+    @Getter List<Step> steps;
+
+    public boolean hasServings() {
+        return servings > 0;
+    }
 
     public boolean hasImage() {
         return image != null && !image.isEmpty();
+    }
+
+    public boolean hasIngredients() {
+        return ingredients != null && !ingredients.isEmpty();
+    }
+
+    public boolean hasSteps() {
+        return steps != null && !steps.isEmpty();
     }
 }

@@ -4,6 +4,13 @@
     <string name="empty_message">Oops! No recipes available. Try again!</string>
     <string name="error_message">Oops! Something went wrong. Try again!</string>
     <string name="connection_message">Oops! You don\'t have a network connection.</string>
+    <string name="ingredients_header">Ingredients</string>
+    <string name="steps_header">Steps</string>
+
+    <plurals name="servings_message">
+        <item quantity="one">Makes %d serving</item>
+        <item quantity="other">Makes %d servings</item>
+    </plurals>
 
     <string-array name="recipe_image_urls">
         <item>http://atreatsaffair.com/wp-content/uploads/2017/07/no-bake-nutella-snickers-pie-recipe-4.jpg</item>

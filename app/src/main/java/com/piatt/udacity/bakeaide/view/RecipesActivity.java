@@ -7,9 +7,9 @@ import android.os.Parcelable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ImageView;
 
-import com.jakewharton.rxbinding2.view.RxView;
 import com.piatt.udacity.bakeaide.BakeAideApplication;
 import com.piatt.udacity.bakeaide.R;
 import com.piatt.udacity.bakeaide.manager.RecipesManager;
@@ -103,7 +103,7 @@ public class RecipesActivity extends BaseActivity implements OnItemClickListener
                 .compose(bindToLifecycle())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(recipes -> {
-                    RxView.visibility(emptyView).accept(false);
+                    emptyView.setVisibility(View.GONE);
                     recipesAdapter.setItems(recipes);
                 });
     }
