@@ -29,6 +29,7 @@ public class RecipeItemsActivity extends BaseActivity implements OnItemClickList
 
     @InjectExtra Recipe recipe;
     @BindView(R.id.ingredients_view) RecyclerView ingredientsView;
+    @BindView(R.id.steps_view) RecyclerView stepsView;
     @Nullable @BindView(R.id.detail_layout) FrameLayout detailLayout;
 
     @Override
@@ -37,12 +38,9 @@ public class RecipeItemsActivity extends BaseActivity implements OnItemClickList
 
         Dart.inject(this);
         configureToolbar(true, recipe.getName());
-        configureRecyclerView(new StepsAdapter(recipe.getSteps(), this), false);
+        configureIngredientsView();
+        configureStepsView();
         twoPaneLayout = detailLayout != null;
-
-        ingredientsView.setLayoutManager(new LinearLayoutManager(this));
-        ingredientsView.setAdapter(new IngredientsAdapter(recipe.getIngredients()));
-        ingredientsView.setNestedScrollingEnabled(false);
     }
 
     @Override
@@ -71,5 +69,17 @@ public class RecipeItemsActivity extends BaseActivity implements OnItemClickList
 
             startActivity(intent);
         }
+    }
+
+    private void configureIngredientsView() {
+        ingredientsView.setLayoutManager(new LinearLayoutManager(this));
+        ingredientsView.setAdapter(new IngredientsAdapter(recipe.getIngredients()));
+        ingredientsView.setNestedScrollingEnabled(false);
+    }
+
+    private void configureStepsView() {
+        stepsView.setLayoutManager(new LinearLayoutManager(this));
+        stepsView.setAdapter(new StepsAdapter(recipe.getSteps(), this));
+        stepsView.setNestedScrollingEnabled(false);
     }
 }
