@@ -46,7 +46,8 @@ public class RecipesManager {
             recipesApi.getRecipes()
                     .subscribeOn(Schedulers.io())
                     .doOnSubscribe(disposable -> fetchStatusEventBus.onNext(new FetchStatusEvent(true)))
-                    .flatMap(this::getRecipesWithImages)
+                    .flatMap(this::addImagesToRecipes)
+                    .flatMap(this::fixStepVideoURLs)
                     .subscribe(recipes -> {
                         if (recipes.isEmpty()) {
                             fetchStatusEventBus.onNext(new FetchStatusEvent(getString(R.string.empty_message)));
@@ -73,16 +74,33 @@ public class RecipesManager {
      * This method takes the list of recipes fetched from the network and adds pre-chosen image URLs,
      * since the predefined JSON has no image URLs attached to its recipes.
      */
-    private Single<List<Recipe>> getRecipesWithImages(List<Recipe> recipes) {
+    private Single<List<Recipe>> addImagesToRecipes(List<Recipe> recipes) {
         String[] recipeImageUrls = context.getResources().getStringArray(R.array.recipe_image_urls);
 
-        return Observable.just(recipes)
-                .flatMap(Observable::fromIterable)
-                .doOnNext(recipe -> {
-                    if (recipe.getId() <= recipeImageUrls.length) {
-                        recipe.setImage(recipeImageUrls[recipe.getId() - 1]);
-                    }
-                }).toList();
+        Observable.fromIterable(recipes)
+                .filter(recipe -> recipe.getId() <= recipeImageUrls.length)
+                .forEach(recipe -> recipe.setImage(recipeImageUrls[recipe.getId() - 1]));
+
+        return Single.just(recipes);
+    }
+
+    /**
+     * This method is only here to fix an error in the JSON fetched from the network.
+     * This method takes the list of recipes fetched from the network and iterates through the recipe steps,
+     * correcting any erroneous assignment of videoURL to thumbnailURL.
+     */
+    private Single<List<Recipe>> fixStepVideoURLs(List<Recipe> recipes) {
+        final String VIDEO_EXTENSION = ".mp4";
+
+        Observable.fromIterable(recipes)
+                .flatMap(recipe -> Observable.fromIterable(recipe.getSteps()))
+                .filter(step -> !step.hasVideoURL() && step.hasThumbnailURL() && step.getThumbnailURL().endsWith(VIDEO_EXTENSION))
+                .forEach(step -> {
+                    step.setVideoURL(step.getThumbnailURL());
+                    step.setThumbnailURL(null);
+                });
+
+        return Single.just(recipes);
     }
 
     private String getString(@StringRes int resourceId) {
