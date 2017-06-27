@@ -78,7 +78,7 @@ public class RecipesManager {
         String[] recipeImageUrls = context.getResources().getStringArray(R.array.recipe_image_urls);
 
         Observable.fromIterable(recipes)
-                .filter(recipe -> recipe.getId() <= recipeImageUrls.length)
+                .filter(recipe -> !recipe.hasImage() && recipe.getId() <= recipeImageUrls.length)
                 .forEach(recipe -> recipe.setImage(recipeImageUrls[recipe.getId() - 1]));
 
         return Single.just(recipes);

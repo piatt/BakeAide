@@ -1,0 +1,5 @@
+<resources>
+    <dimen name="app_icon">128dp</dimen>
+    <dimen name="layout_side_margin">4dp</dimen>
+    <dimen name="recipe_card_image_height">400dp</dimen>
+</resources>

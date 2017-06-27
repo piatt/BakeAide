@@ -1,5 +1,4 @@
 <resources>
-    <dimen name="card_side_margin">72dp</dimen>
-    <dimen name="card_corner_radius">2dp</dimen>
+    <dimen name="layout_side_margin">68dp</dimen>
     <dimen name="recipe_card_image_height">250dp</dimen>
 </resources>
