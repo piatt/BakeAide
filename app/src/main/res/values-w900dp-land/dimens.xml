@@ -3,5 +3,5 @@
 
     <integer name="grid_columns">2</integer>
 
-    <dimen name="recipe_card_image_height">220dp</dimen>
+    <dimen name="recipe_card_image_height">315dp</dimen>
 </resources>

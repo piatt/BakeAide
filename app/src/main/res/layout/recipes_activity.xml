@@ -45,7 +45,9 @@
             android:paddingBottom="@dimen/margin_small"
             android:paddingStart="@dimen/layout_side_margin"
             android:paddingEnd="@dimen/layout_side_margin"
-            android:clipToPadding="false"/>
+            android:clipToPadding="false"
+            app:layoutManager="GridLayoutManager"
+            app:spanCount="@integer/grid_columns"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 </android.support.design.widget.CoordinatorLayout>

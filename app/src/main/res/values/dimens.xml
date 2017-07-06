@@ -1,10 +1,12 @@
 <resources>
     <dimen name="app_icon">64dp</dimen>
 
+    <integer name="grid_columns">1</integer>
+
     <dimen name="layout_side_margin">4dp</dimen>
     <dimen name="card_view_margin">4dp</dimen>
     <dimen name="card_corner_radius">2dp</dimen>
-    <dimen name="recipe_card_image_height">200dp</dimen>
+    <dimen name="recipe_card_image_height">198dp</dimen>
 
     <dimen name="margin_small">4dp</dimen>
     <dimen name="margin_medium">8dp</dimen>

@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -78,7 +77,6 @@ public class RecipesActivity extends BaseActivity implements OnItemClickListener
 
     private void configureRecipesView() {
         recipesAdapter = new RecipesAdapter(this);
-        recipesView.setLayoutManager(new LinearLayoutManager(this));
         recipesView.setAdapter(recipesAdapter);
     }
 
