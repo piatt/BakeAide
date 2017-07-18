@@ -43,10 +43,11 @@ public class RecipeItemsActivity extends BaseActivity implements OnItemClickList
         super.onCreate(savedInstanceState);
 
         Dart.inject(this);
+        twoPaneLayout = detailLayout != null;
+
         configureToolbar(true, recipe.getName());
         configureIngredientsViews();
         configureStepsViews();
-        twoPaneLayout = detailLayout != null;
     }
 
     @Override

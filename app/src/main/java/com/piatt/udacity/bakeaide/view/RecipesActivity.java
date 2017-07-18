@@ -3,7 +3,6 @@ package com.piatt.udacity.bakeaide.view;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -19,8 +18,6 @@ import butterknife.BindView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class RecipesActivity extends BaseActivity implements OnItemClickListener<Recipe> {
-    private final String LAYOUT_MANAGER_STATE = "layoutManagerState";
-
     private RecipesManager recipesManager;
     private RecipesAdapter recipesAdapter;
 
@@ -41,22 +38,6 @@ public class RecipesActivity extends BaseActivity implements OnItemClickListener
     @Override
     protected int getContentView() {
         return R.layout.recipes_activity;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        Parcelable layoutManagerState = recipesView.getLayoutManager().onSaveInstanceState();
-        outState.putParcelable(LAYOUT_MANAGER_STATE, layoutManagerState);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState.containsKey(LAYOUT_MANAGER_STATE)) {
-            Parcelable layoutManagerState = savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE);
-            recipesView.getLayoutManager().onRestoreInstanceState(layoutManagerState);
-        }
     }
 
     @Override
