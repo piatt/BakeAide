@@ -7,6 +7,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -47,7 +48,7 @@ public class RecipeItemsActivity extends BaseActivity implements OnItemClickList
 
         configureToolbar(true, recipe.getName());
         configureIngredientsViews();
-        configureStepsViews();
+        configureStepsViews(savedInstanceState == null);
     }
 
     @Override
@@ -91,13 +92,23 @@ public class RecipeItemsActivity extends BaseActivity implements OnItemClickList
         }
     }
 
-    private void configureStepsViews() {
+    private void configureStepsViews(boolean hasState) {
         if (recipe.hasSteps()) {
             stepsHeaderView.setVisibility(View.VISIBLE);
             stepsView.setLayoutManager(new LinearLayoutManager(this));
             stepsView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
             stepsView.setAdapter(new StepsAdapter(recipe.getSteps(), this));
             stepsView.setNestedScrollingEnabled(false);
+
+            if (hasState && twoPaneLayout) {
+                stepsView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        stepsView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        stepsView.findViewHolderForAdapterPosition(0).itemView.performClick();
+                    }
+                });
+            }
         }
     }
 }
