@@ -48,7 +48,7 @@ public class RecipeItemsActivity extends BaseActivity implements OnItemClickList
 
         configureToolbar(true, recipe.getName());
         configureIngredientsViews();
-        configureStepsViews(savedInstanceState == null);
+        configureStepsViews(savedInstanceState != null);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class RecipeItemsActivity extends BaseActivity implements OnItemClickList
             stepsView.setAdapter(new StepsAdapter(recipe.getSteps(), this));
             stepsView.setNestedScrollingEnabled(false);
 
-            if (hasState && twoPaneLayout) {
+            if (!hasState && twoPaneLayout) {
                 stepsView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
