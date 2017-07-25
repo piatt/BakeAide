@@ -31,7 +31,7 @@ public class RecipesAdapter extends BaseAdapter<Recipe, RecipeViewHolder> {
 
             RxView.clicks(itemView).subscribe(click -> {
                 Recipe recipe = getItem(getAdapterPosition());
-                getOnItemClickListener().onItemClick(recipe);
+                getOnItemClickListener().onItemClick(recipe, getAdapterPosition());
             });
         }
 

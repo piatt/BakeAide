@@ -11,10 +11,8 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.f2prateek.dart.Dart;
-import com.f2prateek.dart.InjectExtra;
+import com.f2prateek.dart.HensonNavigable;
 import com.piatt.udacity.bakeaide.R;
-import com.piatt.udacity.bakeaide.model.Recipe;
 import com.piatt.udacity.bakeaide.model.Step;
 import com.piatt.udacity.bakeaide.view.BaseAdapter.OnItemClickListener;
 
@@ -28,10 +26,11 @@ import butterknife.BindView;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class RecipeItemsActivity extends BaseActivity implements OnItemClickListener<Step> {
+
+@HensonNavigable
+public class RecipeItemsActivity extends StepNavigationActivity implements OnItemClickListener<Step> {
     private boolean twoPaneLayout;
 
-    @InjectExtra Recipe recipe;
     @BindView(R.id.ingredients_header_view) TextView ingredientsHeaderView;
     @BindView(R.id.servings_view) TextView servingsView;
     @BindView(R.id.steps_header_view) TextView stepsHeaderView;
@@ -43,12 +42,12 @@ public class RecipeItemsActivity extends BaseActivity implements OnItemClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Dart.inject(this);
         twoPaneLayout = detailLayout != null;
-
-        configureToolbar(true, recipe.getName());
+        if (twoPaneLayout) {
+            updateStepView(stepNumber);
+        }
         configureIngredientsViews();
-        configureStepsViews(savedInstanceState != null);
+        configureStepsViews();
     }
 
     @Override
@@ -57,22 +56,14 @@ public class RecipeItemsActivity extends BaseActivity implements OnItemClickList
     }
 
     @Override
-    public void onItemClick(Step step) {
+    public void onItemClick(Step step, int position) {
         if (twoPaneLayout) {
-            Intent intent = Henson.with(this)
-                    .gotoRecipeItemFragment()
-                    .step(step)
-                    .build();
-
-            getIntent().putExtras(intent);
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.detail_layout, new RecipeItemFragment())
-                    .commit();
+            updateStepView(position);
         } else {
             Intent intent = Henson.with(this)
                     .gotoRecipeItemActivity()
-                    .step(step)
+                    .recipe(recipe)
+                    .stepNumber(position)
                     .build();
 
             startActivity(intent);
@@ -92,7 +83,7 @@ public class RecipeItemsActivity extends BaseActivity implements OnItemClickList
         }
     }
 
-    private void configureStepsViews(boolean hasState) {
+    private void configureStepsViews() {
         if (recipe.hasSteps()) {
             stepsHeaderView.setVisibility(View.VISIBLE);
             stepsView.setLayoutManager(new LinearLayoutManager(this));

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,8 @@ import butterknife.ButterKnife;
  */
 public class RecipeItemFragment extends Fragment {
     @InjectExtra Step step;
+    @Nullable @BindView(R.id.header_view) TextView headerView;
+    @Nullable @BindView(R.id.description_layout) CardView descriptionLayout;
     @Nullable @BindView(R.id.description_view) TextView descriptionView;
 
     public RecipeItemFragment() {}
@@ -40,10 +43,19 @@ public class RecipeItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.recipe_item_fragment, container, false);
         ButterKnife.bind(this, view);
 
-        if (descriptionView != null) {
-            descriptionView.setText(step.getDescription());
-        }
+        configureViews();
 
         return view;
+    }
+
+    private void configureViews() {
+        if (headerView != null && descriptionLayout != null && descriptionView != null) {
+            headerView.setText(step.getShortDescription());
+            if (step.hasDescription()) {
+                descriptionView.setText(step.getDescription());
+            } else {
+                descriptionLayout.setVisibility(View.GONE);
+            }
+        }
     }
 }

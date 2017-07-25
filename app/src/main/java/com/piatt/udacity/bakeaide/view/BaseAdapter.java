@@ -64,6 +64,6 @@ public abstract class BaseAdapter<T, VH extends BaseViewHolder<T>> extends Recyc
     }
 
     public interface OnItemClickListener<T> {
-        void onItemClick(T item);
+        void onItemClick(T item, int position);
     }
 }

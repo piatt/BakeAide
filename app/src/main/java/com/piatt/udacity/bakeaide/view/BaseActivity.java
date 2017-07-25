@@ -13,8 +13,10 @@ import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import lombok.Getter;
 
 public abstract class BaseActivity extends RxAppCompatActivity {
+    @Getter boolean hasState;
     private Snackbar snackbar;
 
     @BindView(R.id.coordinator_layout) CoordinatorLayout coordinatorLayout;
@@ -26,6 +28,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
         setContentView(getContentView());
         ButterKnife.bind(this);
+        hasState = savedInstanceState != null;
     }
 
     protected abstract @LayoutRes int getContentView();

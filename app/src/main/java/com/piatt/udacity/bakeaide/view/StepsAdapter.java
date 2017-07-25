@@ -30,7 +30,7 @@ public class StepsAdapter extends BaseAdapter<Step, StepViewHolder> {
 
             RxView.clicks(itemView).subscribe(click -> {
                 Step step = getItem(getAdapterPosition());
-                getOnItemClickListener().onItemClick(step);
+                getOnItemClickListener().onItemClick(step, getAdapterPosition());
             });
         }
 

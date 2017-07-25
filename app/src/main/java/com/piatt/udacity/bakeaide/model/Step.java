@@ -13,6 +13,10 @@ public class Step {
     @Getter @Setter String videoURL;
     @Getter @Setter String thumbnailURL;
 
+    public boolean hasDescription() {
+        return !description.equals(shortDescription);
+    }
+
     public boolean hasVideoURL() {
         return videoURL != null && !videoURL.isEmpty();
     }

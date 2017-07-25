@@ -32,7 +32,7 @@ public class RecipesActivity extends BaseActivity implements OnItemClickListener
         recipesManager = BakeAideApplication.getApp().getRecipesManager();
         configureRefreshViews();
         configureRecipesView();
-        configureRecipes(savedInstanceState != null);
+        configureRecipes();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class RecipesActivity extends BaseActivity implements OnItemClickListener
     }
 
     @Override
-    public void onItemClick(Recipe recipe) {
+    public void onItemClick(Recipe recipe, int position) {
         Intent intent = Henson.with(this)
                 .gotoRecipeItemsActivity()
                 .recipe(recipe)
@@ -61,7 +61,7 @@ public class RecipesActivity extends BaseActivity implements OnItemClickListener
         recipesView.setAdapter(recipesAdapter);
     }
 
-    private void configureRecipes(boolean hasState) {
+    private void configureRecipes() {
         if (!hasState) {
             recipesManager.fetchRecipes();
         }
