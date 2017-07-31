@@ -5,4 +5,5 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/margin_standard"
     android:textAppearance="@style/Label"
-    android:background="?attr/selectableItemBackground"/>
+    android:foreground="?selectableItemBackground"
+    android:background="@drawable/step_item_background"/>

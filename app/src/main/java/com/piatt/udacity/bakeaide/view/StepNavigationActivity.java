@@ -2,6 +2,7 @@ package com.piatt.udacity.bakeaide.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
@@ -42,6 +43,7 @@ public abstract class StepNavigationActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
     }
 
+    @CallSuper
     protected void updateStepView(int position) {
         stepNumber = position;
         Step step = recipe.getSteps().get(stepNumber);

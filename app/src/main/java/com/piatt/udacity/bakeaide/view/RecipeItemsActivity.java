@@ -43,9 +43,6 @@ public class RecipeItemsActivity extends StepNavigationActivity implements OnIte
         super.onCreate(savedInstanceState);
 
         twoPaneLayout = detailLayout != null;
-        if (twoPaneLayout) {
-            updateStepView(stepNumber);
-        }
         configureIngredientsViews();
         configureStepsViews();
     }
@@ -70,6 +67,13 @@ public class RecipeItemsActivity extends StepNavigationActivity implements OnIte
         }
     }
 
+    @Override
+    protected void updateStepView(int position) {
+        getStepView(stepNumber).setSelected(false);
+        getStepView(position).setSelected(true);
+        super.updateStepView(position);
+    }
+
     private void configureIngredientsViews() {
         if (recipe.hasIngredients()) {
             ingredientsHeaderView.setVisibility(View.VISIBLE);
@@ -91,15 +95,19 @@ public class RecipeItemsActivity extends StepNavigationActivity implements OnIte
             stepsView.setAdapter(new StepsAdapter(recipe.getSteps(), this));
             stepsView.setNestedScrollingEnabled(false);
 
-            if (!hasState && twoPaneLayout) {
+            if (twoPaneLayout) {
                 stepsView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
                         stepsView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        stepsView.findViewHolderForAdapterPosition(0).itemView.performClick();
+                        getStepView(stepNumber).performClick();
                     }
                 });
             }
         }
+    }
+
+    private View getStepView(int position) {
+        return stepsView.getLayoutManager().findViewByPosition(position);
     }
 }
