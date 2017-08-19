@@ -3,6 +3,7 @@ package com.piatt.udacity.bakeaide.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,6 +32,7 @@ import butterknife.BindView;
 public class RecipeItemsActivity extends StepNavigationActivity implements OnItemClickListener<Step> {
     private boolean twoPaneLayout;
 
+    @BindView(R.id.scroll_view) NestedScrollView scrollView;
     @BindView(R.id.ingredients_header_view) TextView ingredientsHeaderView;
     @BindView(R.id.servings_view) TextView servingsView;
     @BindView(R.id.steps_header_view) TextView stepsHeaderView;
@@ -69,8 +71,10 @@ public class RecipeItemsActivity extends StepNavigationActivity implements OnIte
 
     @Override
     protected void updateStepView(int position) {
+        View stepView = getStepView(position);
         getStepView(stepNumber).setSelected(false);
-        getStepView(position).setSelected(true);
+        stepView.setSelected(true);
+        scrollView.smoothScrollTo(0, (int) stepView.getY());
         super.updateStepView(position);
     }
 
