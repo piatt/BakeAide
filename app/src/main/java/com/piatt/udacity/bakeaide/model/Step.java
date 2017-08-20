@@ -1,5 +1,7 @@
 package com.piatt.udacity.bakeaide.model;
 
+import android.net.Uri;
+
 import org.parceler.Parcel;
 
 import lombok.Getter;
@@ -10,8 +12,12 @@ public class Step {
     @Getter int id;
     @Getter String shortDescription;
     @Getter String description;
-    @Getter @Setter String videoURL;
+    @Setter String videoURL;
     @Getter @Setter String thumbnailURL;
+
+    public Uri getVideoURI() {
+        return Uri.parse(videoURL);
+    }
 
     public boolean hasDescription() {
         return !description.equals(shortDescription);

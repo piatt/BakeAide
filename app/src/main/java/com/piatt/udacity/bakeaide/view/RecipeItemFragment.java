@@ -12,6 +12,15 @@ import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.piatt.udacity.bakeaide.R;
 import com.piatt.udacity.bakeaide.model.Step;
 
@@ -25,12 +34,13 @@ import butterknife.ButterKnife;
  * on handsets.
  */
 public class RecipeItemFragment extends Fragment {
+    private SimpleExoPlayer player;
+
     @InjectExtra Step step;
+    @BindView(R.id.player_view) SimpleExoPlayerView playerView;
     @Nullable @BindView(R.id.header_view) TextView headerView;
     @Nullable @BindView(R.id.description_layout) CardView descriptionLayout;
     @Nullable @BindView(R.id.description_view) TextView descriptionView;
-
-    public RecipeItemFragment() {}
 
     @Override
     public void onAttach(Context context) {
@@ -43,9 +53,35 @@ public class RecipeItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.recipe_item_fragment, container, false);
         ButterKnife.bind(this, view);
 
+        configurePlayer();
         configureViews();
 
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        if (player != null) {
+            player.stop();
+            player.release();
+            player = null;
+        }
+        super.onDestroy();
+    }
+
+    private void configurePlayer() {
+        if (step.hasVideoURL() && player == null) {
+            player = ExoPlayerFactory.newSimpleInstance(getContext(), new DefaultTrackSelector());
+            playerView.setPlayer(player);
+//            player.addListener(this);
+            String userAgent = Util.getUserAgent(getContext(), getString(R.string.app_name));
+            MediaSource mediaSource = new ExtractorMediaSource(step.getVideoURI(),
+                    new DefaultDataSourceFactory(getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
+            player.prepare(mediaSource);
+            player.setPlayWhenReady(true);
+        } else if (step.hasThumbnailURL()) {
+
+        }
     }
 
     private void configureViews() {
