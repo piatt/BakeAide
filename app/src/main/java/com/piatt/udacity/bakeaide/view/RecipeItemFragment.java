@@ -12,12 +12,19 @@ import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
@@ -33,8 +40,11 @@ import butterknife.ButterKnife;
  * in two-pane mode (on tablets) or a {@link RecipeItemActivity}
  * on handsets.
  */
-public class RecipeItemFragment extends Fragment {
+public class RecipeItemFragment extends Fragment implements Player.EventListener {
     private SimpleExoPlayer player;
+    private boolean shouldAutoPlay;
+    private int resumeWindow;
+    private long resumePosition;
 
     @InjectExtra Step step;
     @BindView(R.id.player_view) SimpleExoPlayerView playerView;
@@ -46,41 +56,48 @@ public class RecipeItemFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         Dart.inject(this, getActivity());
+        shouldAutoPlay = true;
+        clearResumePosition();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recipe_item_fragment, container, false);
         ButterKnife.bind(this, view);
-
-        configurePlayer();
+        playerView.requestFocus();
         configureViews();
-
         return view;
     }
 
     @Override
-    public void onDestroy() {
-        if (player != null) {
-            player.stop();
-            player.release();
-            player = null;
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            initializePlayer();
         }
-        super.onDestroy();
     }
 
-    private void configurePlayer() {
-        if (step.hasVideoURL() && player == null) {
-            player = ExoPlayerFactory.newSimpleInstance(getContext(), new DefaultTrackSelector());
-            playerView.setPlayer(player);
-//            player.addListener(this);
-            String userAgent = Util.getUserAgent(getContext(), getString(R.string.app_name));
-            MediaSource mediaSource = new ExtractorMediaSource(step.getVideoURI(),
-                    new DefaultDataSourceFactory(getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
-            player.prepare(mediaSource);
-            player.setPlayWhenReady(true);
-        } else if (step.hasThumbnailURL()) {
+    @Override
+    public void onResume() {
+        super.onResume();
+        if ((Util.SDK_INT <= 23 || player == null)) {
+            initializePlayer();
+        }
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
         }
     }
 
@@ -94,4 +111,70 @@ public class RecipeItemFragment extends Fragment {
             }
         }
     }
+
+    private void initializePlayer() {
+        if (step.hasVideoURL()) {
+            if (player == null) {
+                player = ExoPlayerFactory.newSimpleInstance(getContext(), new DefaultTrackSelector());
+                player.addListener(this);
+                playerView.setPlayer(player);
+                player.setPlayWhenReady(shouldAutoPlay);
+            }
+            String userAgent = Util.getUserAgent(getContext(), getString(R.string.app_name));
+            MediaSource mediaSource = new ExtractorMediaSource(step.getVideoURI(),
+                    new DefaultDataSourceFactory(getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
+            boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
+            if (haveResumePosition) {
+                player.seekTo(resumeWindow, resumePosition);
+            }
+            player.prepare(mediaSource, !haveResumePosition, false);
+        } else if (step.hasThumbnailURL()) {
+            // TODO: show image
+        }
+    }
+
+    private void releasePlayer() {
+        if (player != null) {
+            shouldAutoPlay = player.getPlayWhenReady();
+            updateResumePosition();
+            player.release();
+            player = null;
+        }
+    }
+
+    private void updateResumePosition() {
+        resumeWindow = player.getCurrentWindowIndex();
+        resumePosition = Math.max(0, player.getContentPosition());
+    }
+
+    private void clearResumePosition() {
+        resumeWindow = C.INDEX_UNSET;
+        resumePosition = C.TIME_UNSET;
+    }
+
+    @Override
+    public void onTimelineChanged(Timeline timeline, Object manifest) {}
+
+    @Override
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {}
+
+    @Override
+    public void onLoadingChanged(boolean isLoading) {}
+
+    @Override
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {}
+
+    @Override
+    public void onRepeatModeChanged(int repeatMode) {}
+
+    @Override
+    public void onPlayerError(ExoPlaybackException error) {
+        releasePlayer();
+    }
+
+    @Override
+    public void onPositionDiscontinuity() {}
+
+    @Override
+    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {}
 }
