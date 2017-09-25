@@ -72,8 +72,8 @@ public class RecipeItemFragment extends Fragment implements Player.EventListener
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong(PLAYER_POSITION, Math.max(0, player.getContentPosition()));
-        outState.putBoolean(AUTO_PLAY, player.getPlayWhenReady());
+        outState.putLong(PLAYER_POSITION, playerPosition);
+        outState.putBoolean(AUTO_PLAY, autoPlay);
     }
 
     @Override
@@ -103,6 +103,10 @@ public class RecipeItemFragment extends Fragment implements Player.EventListener
     @Override
     public void onPause() {
         super.onPause();
+        if (player != null) {
+            playerPosition = Math.max(0, player.getContentPosition());
+            autoPlay = player.getPlayWhenReady();
+        }
         if (Util.SDK_INT <= 23) {
             releasePlayer();
         }

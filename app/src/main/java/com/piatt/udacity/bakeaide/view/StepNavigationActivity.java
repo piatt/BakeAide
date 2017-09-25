@@ -49,7 +49,7 @@ public abstract class StepNavigationActivity extends BaseActivity {
         Step step = recipe.getSteps().get(stepNumber);
         updateNavigationButtonVisibility();
 
-        String recipeItemFragmentTag = RecipeItemFragment.class.getSimpleName();
+        String recipeItemFragmentTag = RecipeItemFragment.class.getSimpleName() + stepNumber;
         if (getSupportFragmentManager().findFragmentByTag(recipeItemFragmentTag) == null) {
             Intent intent = Henson.with(this)
                     .gotoRecipeItemFragment()
