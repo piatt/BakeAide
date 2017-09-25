@@ -49,16 +49,19 @@ public abstract class StepNavigationActivity extends BaseActivity {
         Step step = recipe.getSteps().get(stepNumber);
         updateNavigationButtonVisibility();
 
-        Intent intent = Henson.with(this)
-                .gotoRecipeItemFragment()
-                .step(step)
-                .build();
+        String recipeItemFragmentTag = RecipeItemFragment.class.getSimpleName();
+        if (getSupportFragmentManager().findFragmentByTag(recipeItemFragmentTag) == null) {
+            Intent intent = Henson.with(this)
+                    .gotoRecipeItemFragment()
+                    .step(step)
+                    .build();
 
-        getIntent().putExtras(intent);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.detail_layout, new RecipeItemFragment())
-                .commit();
+            getIntent().putExtras(intent);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.detail_layout, new RecipeItemFragment(), recipeItemFragmentTag)
+                    .commit();
+        }
     }
 
     private void configureNavigationButtons() {

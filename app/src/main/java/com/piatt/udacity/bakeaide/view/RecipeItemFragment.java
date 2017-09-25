@@ -41,10 +41,12 @@ import butterknife.ButterKnife;
  * on handsets.
  */
 public class RecipeItemFragment extends Fragment implements Player.EventListener {
+    private final String PLAYER_POSITION = "playerPosition";
+    private final String AUTO_PLAY = "autoPlay";
+
+    private long playerPosition;
+    private boolean autoPlay = true;
     private SimpleExoPlayer player;
-    private boolean shouldAutoPlay;
-    private int resumeWindow;
-    private long resumePosition;
 
     @InjectExtra Step step;
     @BindView(R.id.player_view) SimpleExoPlayerView playerView;
@@ -56,15 +58,28 @@ public class RecipeItemFragment extends Fragment implements Player.EventListener
     public void onAttach(Context context) {
         super.onAttach(context);
         Dart.inject(this, getActivity());
-        shouldAutoPlay = true;
-        clearResumePosition();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            playerPosition = savedInstanceState.getLong(PLAYER_POSITION, C.POSITION_UNSET);
+            autoPlay = savedInstanceState.getBoolean(AUTO_PLAY, true);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(PLAYER_POSITION, Math.max(0, player.getContentPosition()));
+        outState.putBoolean(AUTO_PLAY, player.getPlayWhenReady());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recipe_item_fragment, container, false);
         ButterKnife.bind(this, view);
-        playerView.requestFocus();
         configureViews();
         return view;
     }
@@ -118,16 +133,13 @@ public class RecipeItemFragment extends Fragment implements Player.EventListener
                 player = ExoPlayerFactory.newSimpleInstance(getContext(), new DefaultTrackSelector());
                 player.addListener(this);
                 playerView.setPlayer(player);
-                player.setPlayWhenReady(shouldAutoPlay);
+                player.setPlayWhenReady(autoPlay);
             }
             String userAgent = Util.getUserAgent(getContext(), getString(R.string.app_name));
             MediaSource mediaSource = new ExtractorMediaSource(step.getVideoURI(),
                     new DefaultDataSourceFactory(getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
-            boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
-            if (haveResumePosition) {
-                player.seekTo(resumeWindow, resumePosition);
-            }
-            player.prepare(mediaSource, !haveResumePosition, false);
+            player.seekTo(playerPosition);
+            player.prepare(mediaSource);
         } else if (step.hasThumbnailURL()) {
             // TODO: show image
         }
@@ -135,21 +147,9 @@ public class RecipeItemFragment extends Fragment implements Player.EventListener
 
     private void releasePlayer() {
         if (player != null) {
-            shouldAutoPlay = player.getPlayWhenReady();
-            updateResumePosition();
             player.release();
             player = null;
         }
-    }
-
-    private void updateResumePosition() {
-        resumeWindow = player.getCurrentWindowIndex();
-        resumePosition = Math.max(0, player.getContentPosition());
-    }
-
-    private void clearResumePosition() {
-        resumeWindow = C.INDEX_UNSET;
-        resumePosition = C.TIME_UNSET;
     }
 
     @Override
